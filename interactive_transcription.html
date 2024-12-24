@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Interactive Transcript</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+        }
+        .word {
+            cursor: pointer;
+            color: blue;
+            text-decoration: underline;
+            margin-right: 2px;
+        }
+        .word:hover {
+            color: darkblue;
+        }
+    </style>
+</head>
+<body>
+    <h1>Interactive Transcript</h1>
+    <audio id="audio" controls>
+<source src="The Grisly Pear 46.m4a" type="audio/mpeg">        Your browser does not support the audio element.
+    </audio>
+    <div id="transcript">
+        Loading transcript...
+    </div>
+
+    <script>
+        // Path to the JSON file containing transcription and timestamps
+        const jsonPath = "transcriptions.json";
+
+        // Audio player element
+        const audio = document.getElementById("audio");
+
+        // Div where the transcript will be displayed
+        const transcriptDiv = document.getElementById("transcript");
+
+        // Fetch and display the transcript
+        fetch(jsonPath)
+            .then(response => response.json())
+            .then(data => {
+                // Get the transcription data for the audio file
+                const transcription = data["The Grisly Pear 46.m4a"];
+                transcriptDiv.innerHTML = ""; // Clear the loading message
+
+                transcription.forEach(({ text, start, end }) => {
+                    const span = document.createElement("span");
+                    span.className = "word";
+                    span.innerText = text + " ";
+
+                    // Add click event to play the corresponding audio segment
+                    span.onclick = () => {
+                        audio.currentTime = start;
+                        audio.play();
+                    };
+
+                    transcriptDiv.appendChild(span);
+                });
+            })
+            .catch(err => {
+                console.error("Failed to load transcript:", err);
+                transcriptDiv.innerHTML = "Failed to load transcript.";
+            });
+    </script>
+</body>
+</html>
